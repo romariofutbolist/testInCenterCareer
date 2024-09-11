@@ -11,7 +11,6 @@ public class Main {
         System.out.println(filterFlightsWhereTimeSpentOnGroundMoreThanTwoHours(FlightBuilder.createFlights()));
     }
 
-
     //Вылет до текущего момента времени
     public static List<Flight> filterFlightsByDepartureTime(List<Flight> setFlights) {
         List<Flight> filteredFlights = new ArrayList<>();

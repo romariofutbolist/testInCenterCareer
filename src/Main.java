@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
         System.out.println(FlightBuilder.createFlights());
-        System.out.println(filterFlightsByDepartureTime(FlightBuilder.createFlights()));
-        System.out.println(filterFlightsByArrivalDate(FlightBuilder.createFlights()));
+        //System.out.println(filterFlightsByDepartureTime(FlightBuilder.createFlights()));
+        //System.out.println(filterFlightsByArrivalDate(FlightBuilder.createFlights()));
         System.out.println(filterFlightsWhereTimeSpentOnGroundMoreThanTwoHours(FlightBuilder.createFlights()));
     }
 
@@ -38,11 +38,10 @@ public class Main {
 
     //Метод,возвращающий общее время на земле между перелетами (сегментами)
     private static Duration calculateTotalGroundTime(Flight flight) {
-        List<Segment> segments = flight.getSegments();
         Duration totalGroundTime = Duration.ZERO;
-        for (int i = 1; i < segments.size(); i++) {
-            LocalDateTime timeDeparture = segments.get(i).getDepartureDate();
-            LocalDateTime timeArrival = segments.get(i - 1).getArrivalDate();
+        for (int i = 1; i < flight.getSegments().size(); i++) {
+            LocalDateTime timeDeparture = flight.getSegments().get(i).getDepartureDate();
+            LocalDateTime timeArrival = flight.getSegments().get(i - 1).getArrivalDate();
             Duration groundTime = Duration.between(timeArrival, timeDeparture);
             totalGroundTime = totalGroundTime.plus(groundTime);
         }

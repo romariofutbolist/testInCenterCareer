@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
         System.out.println(FlightBuilder.createFlights());
-        //System.out.println(filterFlightsByDepartureTime(FlightBuilder.createFlights()));
-        //System.out.println(filterFlightsByArrivalDate(FlightBuilder.createFlights()));
+        System.out.println(filterFlightsByDepartureTime(FlightBuilder.createFlights()));
+        System.out.println(filterFlightsByArrivalDate(FlightBuilder.createFlights()));
         System.out.println(filterFlightsWhereTimeSpentOnGroundMoreThanTwoHours(FlightBuilder.createFlights()));
     }
 
@@ -40,9 +40,7 @@ public class Main {
     private static Duration calculateTotalGroundTime(Flight flight) {
         Duration totalGroundTime = Duration.ZERO;
         for (int i = 1; i < flight.getSegments().size(); i++) {
-            LocalDateTime timeDeparture = flight.getSegments().get(i).getDepartureDate();
-            LocalDateTime timeArrival = flight.getSegments().get(i - 1).getArrivalDate();
-            Duration groundTime = Duration.between(timeArrival, timeDeparture);
+            Duration groundTime = Duration.between(flight.getSegments().get(i - 1).getArrivalDate(), flight.getSegments().get(i).getDepartureDate());
             totalGroundTime = totalGroundTime.plus(groundTime);
         }
         return totalGroundTime;

@@ -17,7 +17,7 @@ public class Main {
     public static List<Flight> filterFlightsByDepartureTime(List<Flight> setFlights) {
         return setFlights.stream()
                 .filter(flight -> flight.getSegments().stream()
-                        .allMatch(segment -> !segment.getDepartureDate().isBefore(LocalDateTime.now())))
+                        .noneMatch(segment -> segment.getDepartureDate().isBefore(LocalDateTime.now())))
                 .collect(Collectors.toList());
     }
 
@@ -25,7 +25,7 @@ public class Main {
     public static List<Flight> filterFlightsByArrivalDate(List<Flight> setFlights) {
         return setFlights.stream().
                 filter(flight -> flight.getSegments().stream()
-                        .allMatch(segment -> !segment.getArrivalDate().isBefore(segment.getDepartureDate())))
+                        .noneMatch(segment -> segment.getArrivalDate().isBefore(segment.getDepartureDate())))
                 .collect(Collectors.toList());
     }
 

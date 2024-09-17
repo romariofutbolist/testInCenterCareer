@@ -23,9 +23,6 @@ public class FlightBuilder {
                 createFlight(threeDaysFromNow, threeDaysFromNow.plusHours(2),
                         threeDaysFromNow.plusHours(3), threeDaysFromNow.plusHours(4),
                         threeDaysFromNow.plusHours(6), threeDaysFromNow.plusHours(7)));
-
-
-        //Departure before the current time   Вылет до текущего момента времени
     }
 
     private static Flight createFlight(final LocalDateTime... dates) {

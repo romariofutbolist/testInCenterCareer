@@ -1,7 +1,9 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,64 +13,39 @@ public class Main {
         System.out.println(filterFlightsWhereTimeSpentOnGroundMoreThanTwoHours(FlightBuilder.createFlights()));
     }
 
-
-    //Вылет до текущего момента времени
+    //Список полетов, у которых отсутствует Вылет раньше текущего момента времени
     public static List<Flight> filterFlightsByDepartureTime(List<Flight> setFlights) {
-        List<Flight> filteredFlights = new ArrayList<>();
-        for (Flight flight : setFlights) {
-            List<Segment> segments = flight.getSegments();
-            boolean isSegmentCorrect = true;
-            for (int i = 0; i < segments.size(); i++) {
-                Segment segment = segments.get(i);
-                if (segment.getDepartureDate().isBefore(LocalDateTime.now())) {
-                    isSegmentCorrect = false;
-                }
-            }
-            if (isSegmentCorrect) {
-                filteredFlights.add(flight);
-            }
-        }
-        return filteredFlights;
+        return setFlights.stream()
+                .filter(flight -> flight.getSegments().stream()
+                        .allMatch(segment -> !segment.getDepartureDate().isBefore(LocalDateTime.now())))
+                .collect(Collectors.toList());
     }
 
-    //Сегменты с датой прилёта раньше даты вылета.
+    //Список полетов, у которых отсутствуют Сегменты с датой прилёта раньше даты вылета.
     public static List<Flight> filterFlightsByArrivalDate(List<Flight> setFlights) {
-        List<Flight> filteredFlights = new ArrayList<>();
-        for (Flight flight : setFlights) {
-            List<Segment> segments = flight.getSegments();
-            boolean isSegmentCorrect = true;
-            for (int i = 0; i < segments.size(); i++) {
-                Segment segment = segments.get(i);
-                if (segment.getArrivalDate().isBefore(segment.getDepartureDate())) {
-                    isSegmentCorrect = false;
-                }
-            }
-            if (isSegmentCorrect) {
-                filteredFlights.add(flight);
-            }
-        }
-        return filteredFlights;
+        return setFlights.stream().
+                filter(flight -> flight.getSegments().stream()
+                        .allMatch(segment -> !segment.getArrivalDate().isBefore(segment.getDepartureDate())))
+                .collect(Collectors.toList());
     }
 
-    //Перелеты, где общее время, проведённое на земле, превышает два часа (время на земле —
-    // это интервал между прилётом одного сегмента и вылетом следующего за ним).
+    //Список полетов, где общее время, проведённое на земле, не превышает два часа
     public static List<Flight> filterFlightsWhereTimeSpentOnGroundMoreThanTwoHours(List<Flight> setFlights) {
-        List<Flight> filteredFlights = new ArrayList<>();
-        Duration totalGroundTime = Duration.ZERO;
-        for (Flight flight : setFlights) {
-            List<Segment> segments = flight.getSegments();
-                for (int i = 1; i < segments.size(); i++) {
-                    LocalDateTime timeDeparture = segments.get(i).getDepartureDate();
-                    LocalDateTime timeArrival = segments.get(i - 1).getArrivalDate();
+        return setFlights.stream()
+                .filter(flight -> calculateTotalGroundTime(flight).toHours() <= 2)
+                .collect(Collectors.toList());
+    }
 
-                    Duration groundTime = Duration.between(timeArrival, timeDeparture);
-                    totalGroundTime = totalGroundTime.plus(groundTime);
-            }
-                if (totalGroundTime.toHours() > 2) {
-                    filteredFlights.add(flight);
-                }
-            totalGroundTime = Duration.ZERO;
-            }
-        return filteredFlights;
+    //Метод,возвращающий общее время на земле между перелетами (сегментами)
+    private static Duration calculateTotalGroundTime(Flight flight) {
+        List<Segment> segments = flight.getSegments();
+        Duration totalGroundTime = Duration.ZERO;
+        for (int i = 1; i < segments.size(); i++) {
+            LocalDateTime timeDeparture = segments.get(i).getDepartureDate();
+            LocalDateTime timeArrival = segments.get(i - 1).getArrivalDate();
+            Duration groundTime = Duration.between(timeArrival, timeDeparture);
+            totalGroundTime = totalGroundTime.plus(groundTime);
+        }
+        return totalGroundTime;
     }
 }

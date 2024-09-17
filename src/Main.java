@@ -17,7 +17,7 @@ public class Main {
     public static List<Flight> filterFlightsByDepartureTime(List<Flight> setFlights) {
         return setFlights.stream()
                 .filter(flight -> flight.getSegments().stream()
-                        .allMatch(segment -> !segment.getDepartureDate().isBefore(LocalDateTime.now())))
+                        .noneMatch(segment -> segment.getDepartureDate().isBefore(LocalDateTime.now())))
                 .collect(Collectors.toList());
     }
 
@@ -25,7 +25,7 @@ public class Main {
     public static List<Flight> filterFlightsByArrivalDate(List<Flight> setFlights) {
         return setFlights.stream().
                 filter(flight -> flight.getSegments().stream()
-                        .allMatch(segment -> !segment.getArrivalDate().isBefore(segment.getDepartureDate())))
+                        .noneMatch(segment -> segment.getArrivalDate().isBefore(segment.getDepartureDate())))
                 .collect(Collectors.toList());
     }
 
@@ -38,12 +38,9 @@ public class Main {
 
     //Метод,возвращающий общее время на земле между перелетами (сегментами)
     private static Duration calculateTotalGroundTime(Flight flight) {
-        List<Segment> segments = flight.getSegments();
         Duration totalGroundTime = Duration.ZERO;
-        for (int i = 1; i < segments.size(); i++) {
-            LocalDateTime timeDeparture = segments.get(i).getDepartureDate();
-            LocalDateTime timeArrival = segments.get(i - 1).getArrivalDate();
-            Duration groundTime = Duration.between(timeArrival, timeDeparture);
+        for (int i = 1; i < flight.getSegments().size(); i++) {
+            Duration groundTime = Duration.between(flight.getSegments().get(i - 1).getArrivalDate(), flight.getSegments().get(i).getDepartureDate());
             totalGroundTime = totalGroundTime.plus(groundTime);
         }
         return totalGroundTime;

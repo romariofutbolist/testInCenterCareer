@@ -13,6 +13,7 @@ public class Main {
         System.out.println(filterFlightsWhereTimeSpentOnGroundMoreThanTwoHours(FlightBuilder.createFlights()));
     }
 
+
     //Список полетов, у которых отсутствует Вылет раньше текущего момента времени
     public static List<Flight> filterFlightsByDepartureTime(List<Flight> setFlights) {
         return setFlights.stream()
@@ -21,6 +22,7 @@ public class Main {
                 .collect(Collectors.toList());
     }
 
+
     //Список полетов, у которых отсутствуют Сегменты с датой прилёта раньше даты вылета.
     public static List<Flight> filterFlightsByArrivalDate(List<Flight> setFlights) {
         return setFlights.stream().
@@ -28,6 +30,7 @@ public class Main {
                         .allMatch(segment -> !segment.getArrivalDate().isBefore(segment.getDepartureDate())))
                 .collect(Collectors.toList());
     }
+
 
     //Список полетов, где общее время, проведённое на земле, не превышает два часа
     public static List<Flight> filterFlightsWhereTimeSpentOnGroundMoreThanTwoHours(List<Flight> setFlights) {
